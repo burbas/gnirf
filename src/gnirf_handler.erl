@@ -5,18 +5,14 @@
 -export([websocket_handle/2]).
 -export([websocket_info/2]).
 
--record(state, {
-          uuid :: string(),
-          games = [] :: [{binary(), binary()}],
-          chat_rooms = [] :: [{binary(), binary()}]
-         }).
+-include("../include/player.hrl").
 
 init(Req, Opts) ->
 	{cowboy_websocket, Req, Opts}.
 
 websocket_init(State) ->
-    Id = uuid:to_string(uuid:uuid4()),
-    {reply, {text, Id}, #state{uuid = Id}}.
+    Id = erlang:list_to_binary(uuid:to_string(uuid:uuid4())),
+    {reply, {text, Id}, #player{uuid = Id}}.
 
 websocket_handle({text, Msg}, State) ->
     {Response, NewState} = gnirf_json_handler:handle_msg(Msg, State),

@@ -3,6 +3,8 @@
          handle_msg/2
         ]).
 
+-include("../include/player.hrl").
+
 handle_msg(Msg, State) ->
     try jsx:decode(Msg) of
         Payload ->
@@ -35,7 +37,7 @@ handle_json(<<"game">>, Json, State) ->
         undefined ->
             {[{error, missing_game_ident}], State};
         GameIdent ->
-            _RoutingKey =
+            RoutingKey =
                 case proplists:get_value(<<"subject">>, Json) of
                     undefined ->
                         <<"game.", GameIdent/binary, ".matchmaking">>;
@@ -43,6 +45,7 @@ handle_json(<<"game">>, Json, State) ->
                         <<"game.", GameIdent/binary, Subject/binary>>
                 end,
             %% Use the Routingkey send out the request
+            io:format("RoutingKey: ~p~n", [RoutingKey]),
             Response = ok,
             {Response, State}
     end;
