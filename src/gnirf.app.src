@@ -6,6 +6,7 @@
   {applications,
    [cowboy,
     kernel,
+    amqp_client,
     stdlib
    ]},
   {env,[]},

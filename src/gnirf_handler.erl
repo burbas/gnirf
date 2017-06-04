@@ -6,7 +6,9 @@
 -export([websocket_info/2]).
 
 -record(state, {
-          uuid
+          uuid :: string(),
+          games = [] :: [{binary(), binary()}],
+          chat_rooms = [] :: [{binary(), binary()}]
          }).
 
 init(Req, Opts) ->
@@ -17,9 +19,9 @@ websocket_init(State) ->
     {reply, {text, Id}, #state{uuid = Id}}.
 
 websocket_handle({text, Msg}, State) ->
-    Response = gnirf_json_handler:handle_msg(Msg, State),
+    {Response, NewState} = gnirf_json_handler:handle_msg(Msg, State),
     Json = jsx:encode(Response),
-    {reply, {text, Json}, State};
+    {reply, {text, Json}, NewState};
 
 websocket_handle(_Data, State) ->
 	{ok, State}.
